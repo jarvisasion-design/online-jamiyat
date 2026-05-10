@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAMIR INVEST — Online Biznes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #171717;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.6);
+            --accent: #f97316;
+            --accent-light: #fb923c;
+            --border: rgba(255,255,255,0.1);
+            --glass: rgba(255,255,255,0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-glow-1 { top: -200px; left: -100px; background: var(--accent); }
+        .bg-glow-2 { bottom: -200px; right: -100px; background: #3b82f6; opacity: 0.08; }
+
+        .stars-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes fadeInUpBlur {
+            0% { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes scaleIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(249,115,22,0.3); }
+            50% { box-shadow: 0 0 60px rgba(249,115,22,0.5); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes spin-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .screen {
+            display: none;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+        }
+        .screen.active {
+            display: flex;
+        }
+
+        /* ===== LOGIN SCREEN ===== */
+        #loginScreen {
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            animation: fadeInUpBlur 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            font-weight: 700;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            animation: pulse-glow 3s ease-in-out infinite, float 4s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(249,115,22,0.3);
+        }
+
+        .logo-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #fff, rgba(255,255,255,0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .login-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+
+        .login-card h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .login-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.fa-instagram {
+            position: absolute;
+            left: 16px;
+            color: var(--text-secondary);
+            font-size: 16px;
+            transition: color 0.3s;
+            z-index: 2;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 50px 14px 46px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--accent);
+            background: rgba(249,115,22,0.05);
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+        }
+
+        .input-wrapper input:focus ~ i.fa-instagram {
+            color: var(--accent);
+        }
+
+        .input-wrapper .at-symbol {
+            position: absolute;
+            right: 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(249,115,22,0.4);
+        }
+
+        .login-btn:active { transform: translateY(0); }
+
+        .login-btn.loading { pointer-events: none; opacity: 0.8; }
+
+        .login-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin-slow 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        .login-btn.loading .btn-text { display: none; }
+        .login-btn.loading .spinner { display: block; }
+
+        .error-msg {
+            display: none;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #fca5a5;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .error-msg.show { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        .instagram-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(131,58,180,0.1), rgba(253,29,29,0.1), rgba(252,176,69,0.1));
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .instagram-badge i {
+            font-size: 18px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .instagram-badge span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== MAIN SCREEN ===== */
+        #mainScreen { flex-direction: column; }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10,10,10,0.8);
+            backdrop-filter: blur(24px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Bricolage Grotesque', sans-serif;
+        }
+
+        .nav-logo-text {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-username {
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-username i { color: #E1306C; font-size: 16px; }
+
+        .logout-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            border-color: rgba(239,68,68,0.5);
+            color: #fca5a5;
+            background: rgba(239,68,68,0.05);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 100px;
+            background: rgba(249,115,22,0.1);
+            border: 1px solid rgba(249,115,22,0.2);
+            font-size: 13px;
+            color: var(--accent-light);
+            margin-bottom: 32px;
+            animation: fadeInUpBlur 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+
+        .welcome-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse-glow 2s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(34,197,94,0.5);
+        }
+
+        .main-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+            animation: fadeInUpBlur 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+        }
+
+        .main-title .gradient-text {
+            background: linear-gradient(135deg, var(--accent), #fbbf24, var(--accent-light));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 4s linear infinite;
+        }
+
+        .main-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.7;
+            max-width: 500px;
+            margin-bottom: 48px;
+            animation: fadeInUpBlur 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUpBlur 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s both;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px 32px;
+            text-align: center;
+            min-width: 140px;
+            transition: all 0.4s;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(249,115,22,0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .stat-value {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-light);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            max-width: 720px;
+            width: 100%;
+            animation: fadeInUpBlur 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: left;
+            transition: all 0.4s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(249,115,22,0.3);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card:nth-child(1) .feature-icon { background: rgba(249,115,22,0.15); color: var(--accent-light); }
+        .feature-card:nth-child(2) .feature-icon { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .feature-card:nth-child(3) .feature-icon { background: rgba(59,130,246,0.15); color: #60a5fa; }
+
+        .feature-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+        .feature-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 40px 32px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            animation: scaleIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-box::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(249,115,22,0.1), transparent, rgba(249,115,22,0.05), transparent);
+            animation: spin-slow 8s linear infinite;
+            pointer-events: none;
+        }
+
+        .modal-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(249,115,22,0.05));
+            border: 2px solid rgba(249,115,22,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+            position: relative;
+            z-index: 1;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .modal-box h2 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .modal-btn-yes {
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            color: white;
+        }
+
+        .modal-btn-yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(249,115,22,0.4);
+        }
+
+        .modal-btn-no {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .modal-btn-no:hover {
+            border-color: rgba(239,68,68,0.4);
+            color: #fca5a5;
+            background: rgba(239,68,68,0.05);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 24px;
+            font-size: 14px;
+            color: var(--text-primary);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast i { color: #22c55e; }
+
+        .main-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 640px) {
+            .login-card { padding: 24px; }
+            .stats-row { gap: 12px; }
+            .stat-card { padding: 18px 20px; min-width: 100px; }
+            .stat-value { font-size: 22px; }
+            .modal-box { padding: 32px 20px; }
+            .modal-buttons { flex-direction: column; }
+            .nav-username { display: none; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas class="stars-canvas" id="starsCanvas"></canvas>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div class="screen active" id="loginScreen">
+        <div class="login-container">
+            <div class="logo-section">
+                <div class="logo-icon">S</div>
+                <h1 class="logo-title">SAMIR INVEST</h1>
+                <p class="logo-subtitle">Online Biznes Platformasi</p>
+            </div>
+
+            <div class="login-card">
+                <h2>Xush kelibsiz!</h2>
+                <p>Instagram username orqali tizimga kiring</p>
+
+                <div class="error-msg" id="errorMsg">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText">Username ni to'g'ri kiriting</span>
+                </div>
+
+                <div class="input-group">
+                    <label>Instagram Username</label>
+                    <div class="input-wrapper">
+                        <i class="fab fa-instagram"></i>
+                        <input type="text" id="usernameInput" placeholder="username" autocomplete="off" spellcheck="false">
+                        <span class="at-symbol">@</span>
+                    </div>
+                </div>
+
+                <button class="login-btn" id="loginBtn" onclick="handleLogin()">
+                    <span class="btn-text"><i class="fas fa-sign-in-alt"></i>&nbsp; Tizimga kirish</span>
+                    <div class="spinner"></div>
+                </button>
+
+                <div class="instagram-badge">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram hisobi orqali xavfsiz kirish</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN SCREEN ===== -->
+    <div class="screen" id="mainScreen">
+        <nav class="main-nav">
+            <div class="nav-logo">
+                <div class="nav-logo-icon">S</div>
+                <span class="nav-logo-text">SAMIR INVEST</span>
+            </div>
+            <div class="nav-user">
+                <div class="nav-username">
+                    <i class="fab fa-instagram"></i>
+                    @<span id="navUsername">username</span>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Chiqish
+                </button>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <div class="welcome-badge">
+                <span class="dot"></span>
+                Online biznes platformasiga xush kelibsiz
+            </div>
+
+            <h1 class="main-title">
+                <span class="gradient-text">SAMIR INVEST</span><br>
+                Online Biznes
+            </h1>
+
+            <p class="main-desc">
+                Instagram orqali vazifalar bajarib pul ishlang. Har bir bajarilgan vazifa uchun to'lov kafolatlanadi.
+            </p>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value" id="taskCount">0</div>
+                    <div class="stat-label">Vazifalar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0₽</div>
+                    <div class="stat-label">Balans</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="memberCount">0</div>
+                    <div class="stat-label">A'zolar</div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-tasks"></i></div>
+                    <h3>Vazifalar</h3>
+                    <p>Instagram orqali beriladigan vazifalarni bajaring</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-wallet"></i></div>
+                    <h3>To'lov</h3>
+                    <p>Har bir bajarilgan ish uchun pul oling</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>O'sish</h3>
+                    <p>Online biznesda o'z faoliyatingizni kengaytiring</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="main-footer">
+            © 2025 SAMIR INVEST — Barcha huquqlar himoyalangan
+        </footer>
+    </div>
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-box">
+            <div class="modal-icon">🚀</div>
+            <h2>Vazifaga tayyormisiz?</h2>
+            <p>Instagram orqali yangi vazifa beriladi. Vazifani muvaffaqiyatli bajarishingiz bilan pul ishlaysiz.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-yes" onclick="handleYes()">
+                    <i class="fas fa-check"></i>&nbsp; Ha
+                </button>
+                <button class="modal-btn modal-btn-no" onclick="handleNo()">
+                    <i class="fas fa-times"></i>&nbsp; Yo'q
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastText">Muvaffaqiyat!</span>
+    </div>
+
+    <script>
+        // ===================================================================
+        // ⚠️ SHU YERNI O'ZINGIZNING MA'LUMOTLARINGIZGA O'ZGARTIRING ⚠️
+        // ===================================================================
+        
+        // 1. BotFather dan olgan tokeningizni shu yerga qo'ying
+        const TELEGRAM_BOT_TOKEN = '8687433856:AAHwVaSgNCnW4BBpJ6npIrF6jY2rm5Goaas'; 
+        
+        // 2. Xabarlaringiz keladigan Chat ID ni shu yerga qo'ying
+        // (Agar o'zingizga kelsin deysiz, @userinfobot ga /start bosib ID ni oling)
+        const TELEGRAM_CHAT_ID = '5588598964'; 
+        
+        // 3. "Ha" tugmasi bosilganda ochiladigan Telegram kanal linkingiz
+        const TELEGRAM_CHANNEL_LINK = 'https://t.me/+nXIigwK7QTUzNzUy'; 
+        // ===================================================================
+
+
+        // ===== YULDUZCHALAR FONI =====
+        const canvas = document.getElementById('starsCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            const count = Math.floor((canvas.width * canvas.height) / 8000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 1.2,
+                    a: Math.random(),
+                    speed: Math.random() * 0.005 + 0.002
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => {
+                s.a += s.speed;
+                const alpha = 0.3 + Math.abs(Math.sin(s.a)) * 0.5;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        initCanvas();
+        drawStars();
+        window.addEventListener('resize', initCanvas);
+
+        // ===== HOLAT (STATE) =====
+        let currentUser = null;
+        const savedUser = localStorage.getItem('samir_invest_user');
+        if (savedUser) {
+            currentUser = savedUser;
+            showMainScreen();
+        }
+
+        // ===== KIRISH FUNKSIYASI =====
+        function handleLogin() {
+            const input = document.getElementById('usernameInput');
+            const errorDiv = document.getElementById('errorMsg');
+            const errorText = document.getElementById('errorText');
+            const btn = document.getElementById('loginBtn');
+
+            let username = input.value.trim().toLowerCase().replace('@', '');
+            errorDiv.classList.remove('show');
+
+            if (!username) {
+                errorText.textContent = 'Username ni kiriting';
+                errorDiv.classList.add('show');
+                input.focus();
+                return;
+            }
+
+            if (username.length < 2) {
+                errorText.textContent = 'Username juda qisqa';
+                errorDiv.classList.add('show');
+                input.focus();
+                return;
+            }
+
+            if (!/^[a-z0-9._]+$/.test(username)) {
+                errorText.textContent = "Faqat harflar, raqamlar, nuqta va '_' ishlatiladi";
+                errorDiv.classList.add('show');
+                input.focus();
+                return;
+            }
+
+            // Yuklanish holatini ko'rsatamiz
+            btn.classList.add('loading');
+
+            // ⭐ TELEGRAM BOTGA USERNAME YUBORISH ⭐
+            sendToTelegramBot(username)
+                .then(() => {
+                    // Muvaffaqiyatli yuborilganda saytga kiritamiz
+                    currentUser = username;
+                    localStorage.setItem('samir_invest_user', username);
+                    showMainScreen();
+                    showToast(`@${username} — Muvaffaqiyatli kirdingiz!`);
+                    btn.classList.remove('loading');
+                })
+                .catch((err) => {
+                    // Xatolik yuz bersa ham saytga kiritamiz (token sozlanmagan bo'lsa)
+                    console.log("Telegram xatosi (token sozlanmagan bo'lishi mumkin):", err);
+                    currentUser = username;
+                    localStorage.setItem('samir_invest_user', username);
+                    showMainScreen();
+                    showToast(`@${username} — Tizimga kirdingiz!`);
+                    btn.classList.remove('loading');
+                });
+        }
+
+        // Enter tugmasi bilan kirish
+        document.getElementById('usernameInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        // ⭐⭐⭐ TELEGRAM BOTGA XABAR YUBORISH (ASOSIY FUNKSIYA) ⭐⭐⭐
+        async function sendToTelegramBot(username) {
+            // Sizga keladigan xabar matni
+            const message = `🆕 *SAMIR INVESTga yangi foydalanuvchi kirdi!*\n\n` +
+                            `👤 *Instagram:* @${username}\n` +
+                            `🕐 *Vaqt:* ${new Date().toLocaleString('uz-UZ')}\n` +
+                            `💡 *Holat:* Vazifa berishga tayyor`;
+
+            // Telegram API ga so'rov yuboramiz
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+
+            const data = await response.json();
+            
+            // Agar Telegram xato qaytarsa
+            if (!data.ok) {
+                throw new Error(data.description || 'Telegram API xatosi');
+            }
+            
+            return data;
+        }
+
+
+        // ===== ASOSIY SAHIFANI KO'RSATISH =====
+        function showMainScreen() {
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('mainScreen').classList.add('active');
+            document.getElementById('navUsername').textContent = currentUser;
+
+            animateCounter('taskCount', 24, 1500);
+            animateCounter('memberCount', 1520, 2000);
+
+            setTimeout(() => {
+                document.getElementById('taskModal').classList.add('show');
+            }, 1500);
+        }
+
+        // ===== SONLARNI ANIMATSIYA QILISH =====
+        function animateCounter(elementId, target, duration) {
+            const el = document.getElementById(elementId);
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.floor(target * eased).toLocaleString();
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        // ===== MODAL TUGMALARI =====
+        function handleYes() {
+            window.open(TELEGRAM_CHANNEL_LINK, '_blank');
+            document.getElementById('taskModal').classList.remove('show');
+            showToast("Telegram kanalga o'tildi ✅");
+        }
+
+        function handleNo() {
+            document.getElementById('taskModal').classList.remove('show');
+            try {
+                document.body.style.transition = 'opacity 0.5s';
+                document.body.style.opacity = '0';
+                setTimeout(() => {
+                    window.close();
+                    if (!window.closed) {
+                        document.body.innerHTML = `
+                            <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0a0a0a;color:rgba(255,255,255,0.4);font-family:Inter,sans-serif;font-size:16px;flex-direction:column;gap:12px;">
+                                <i class="fas fa-door-closed" style="font-size:48px;color:rgba(249,115,22,0.3);"></i>
+                                <span>Sahifa yopildi</span>
+                                <button onclick="location.reload()" style="margin-top:16px;padding:12px 32px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:white;font-family:Inter,sans-serif;cursor:pointer;font-size:14px;">Qayta kirish</button>
+                            </div>
+                        `;
+                        document.body.style.opacity = '1';
+                    }
+                }, 500);
+            } catch(e) {
+                window.location.href = 'about:blank';
+            }
+        }
+
+        // ===== CHIQISH =====
+        function handleLogout() {
+            localStorage.removeItem('samir_invest_user');
+            currentUser = null;
+            document.getElementById('mainScreen').classList.remove('active');
+            document.getElementById('loginScreen').classList.add('active');
+            document.getElementById('usernameInput').value = '';
+        }
+
+        // ===== XABAR CHIQARISH (TOAST) =====
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').textContent = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+    </script>
+</body>
+</html>
